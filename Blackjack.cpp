@@ -35,7 +35,7 @@ int main(){
             d.player[i].ai=false;
         }
     }
-    d.DealCards();
+    d.DealCards(Players);
     for(int i=0;i<Players;i++){
         bool turn=true;
         if(!d.player[i].ai){
@@ -45,7 +45,7 @@ int main(){
                 op=stoi(operation);
                 switch(op){
                     case 1:
-                        turn=d.draw(i);
+                        turn=d.hit(i);
                         break;
                     case 2:
                         turn=false;
@@ -60,10 +60,10 @@ int main(){
         }
         else{
             while(turn){
-                cout<<"Player "<<i+1<<"'s hand is "d.player[i].hand<<endl;
-                if(d.player[i].sum<17){
+                cout<<"Player "<<i+1<<"'s hand is "<<d.player[i].hand<<endl;
+                if(d.player[i].sum()<17){
                     cout<<"Player "<<i+1<<" hits."<<endl;
-                    turn=d.draw(i);
+                    turn=d.hit(i);
                 }
                 else{
                     cout<<"Player "<<i+1<<" stays."<<endl;
