@@ -1,13 +1,14 @@
 #ifndef DECK_H
 #define DECK_H
 
+using namespace std;
 struct Card{
-    std::string number;
+    string number;
     int suit;
 
     Card(){};
 
-    Card(std::string innumber, int insuit){
+    Card(string innumber, int insuit){
         number = innumber;
         suit = insuit;
     }
@@ -16,10 +17,11 @@ struct Card{
 struct Player{
     Card hand[5];
     int number;
-    std::string name;
-
+    string name;
+    bool ai=true;
+    int sum();
     Player(){};
-    Player(std::string inname, int innumber){
+    Player(string inname, int innumber){
         number = innumber;
         name = inname;
     }
@@ -27,12 +29,16 @@ struct Player{
 
 class Deck{
 public:
-    Deck();
+    Deck(int Players);
     ~Deck();
     void shuffleDeck();
-    void DealCards(int players);
-    void hit(int player);
+    void DealCards(int Players);
+    bool hit(int player);
+    void peek();
+    void declare();
+    void dealer();
     int win(int player);
+    Player player[5];
 
 private:
     Card decklist[52];
