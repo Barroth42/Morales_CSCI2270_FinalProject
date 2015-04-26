@@ -3,23 +3,24 @@
 
 using namespace std;
 struct Card{
-    string number;
+    int number;
     int suit;
 
     Card(){};
 
-    Card(string innumber, int insuit){
+    Card(int innumber, int insuit){
         number = innumber;
         suit = insuit;
     }
 };
 
 struct Player{
-    Card hand[5];
+    Card *hand[5];
     int number;
     string name;
     bool ai=true;
-    int sum();
+    int sum;
+    int sumHand();
     Player(){};
     Player(string inname, int innumber){
         number = innumber;
@@ -38,10 +39,11 @@ public:
     void declare();
     void dealer();
     int win(int player);
-    Player player[5];
+    Player players[5];
 
 private:
     Card decklist[52];
+    int topCard;
 };
 
 #endif // DECK_H
