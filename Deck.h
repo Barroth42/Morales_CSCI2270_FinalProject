@@ -13,6 +13,18 @@ struct Card{
     }
 };
 
+struct Player{
+    Card hand[5];
+    int number;
+    std::string name;
+
+    Player(){};
+    Player(std::string inname, int innumber){
+        number = innumber;
+        name = inname;
+    }
+};
+
 class Deck{
 public:
     Deck();
