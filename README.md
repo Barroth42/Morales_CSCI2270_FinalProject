@@ -1,7 +1,7 @@
 # Morales_CSCI2270_FinalProject
 
 # Summary
-In this project, we will be recreating the pygame library in C++. This will be a library that will allow people to create simple games within C++. The library will allow or keypress detection, board creation and implementation of gameplay. It will be an implemented library with some if not all of the pygame capability to allow for games to be created in C++.
+In this project, we will be recreating the pygame library in C++. This will be a library that will allow people to create simple games within C++. The library will allow or keypress detection, board creation and implementation of gameplay. It will be an implemented library with some if not all of the pygame capability to allow for games to be created in C++. ***In the interest of time we have decided to make a blackjack game as rewriting the pygame library would take longer than the alotted time. This blackjack game will allow for single-player and multi-player gameplay with a programmed AI for the Dealer as well as a few computer based players ranging in aggressiveness to determine when they stop hitting.***
 
 # How to run
 This program is a library so it is included into a program to allow for more capability in one's code.
