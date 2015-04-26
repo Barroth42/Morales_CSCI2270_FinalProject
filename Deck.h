@@ -18,6 +18,9 @@ public:
     Deck();
     ~Deck();
     void shuffleDeck();
+    void DealCards(int players);
+    void hit(int player);
+    int win(int player);
 
 private:
     Card decklist[52];
