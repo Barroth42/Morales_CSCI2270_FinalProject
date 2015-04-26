@@ -38,7 +38,12 @@ int Player::sumHand()
 				{
 					if(ai)
 					{
-						sum += 11;//There will be bugs with this. If they bust, the ace should change to mean 1.
+					    if(sum + 11 <= 21){
+                            sum += 11;//There will be bugs with this. If they bust, the ace should change to mean 1.
+					    }
+					    else{
+                            sum++;
+					    }
 					}
 					else
 					{
@@ -67,7 +72,7 @@ int Player::sumHand()
 			{
 				sum += 10;
 			}
-			
+
 			lastSummed = i;
 		}
 	}
@@ -103,7 +108,7 @@ void Deck::shuffleDeck()
 		}
 		shuffledDeck[i]=unshuffledDeck[cardIndex];
 	}*/
-	
+
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();//found this method at http://www.cplusplus.com/reference/algorithm/shuffle/
 	shuffle(decklist.begin(),decklist.end(),std::default_random_engine(seed));
 	//Potential problem: May need to make it an array instead of a vector, but will need to test it before knowing.
@@ -127,15 +132,48 @@ void Deck::DealCards()
 			{
 				players[i].hand[j] = NULL;
 			}
-			
+
 		}
 	}
 }
 
-/*void PrintHand(Player p)
+void PrintHand(Player p)
 {
-	
-}*/
+	int loc = 0;
+	while(loc < 5 && p->hand[loc] != NULL){
+        if(p->hand[loc]->number <=10 && p->hand[loc]->number >0){
+            cout<<p->hand[loc]->number;
+        }
+        else if(p->hand[loc]->number == 11){
+            cout<<"J";
+        }
+        else if(p->hand[loc]->number == 12){
+            cout<<"Q";
+        }
+        else if(p->hand[loc]->number == 13){
+            cout<<"K";
+        }
+        else{
+            cout<<"somethingiswrongwiththecardnumber";
+        }
+        if(p->hand[loc]->suit == 0){
+            cout<<"♠   ";
+        }
+        else if(p->hand[loc]->suit == 1){
+            cout<<"♣   ";
+        }
+        else if(p->hand[loc]->suit == 2){
+            cout<<"♥   ";
+        }
+        else if(p->hand[loc]->suit == 3){
+            cout<<"♦   ";
+        }
+        else{
+            cout<<"something is wrong with the card suit   ";
+        }
+	}
+	cout<<"\n"<<endl;
+}
 bool Deck::hit(Player p)
 {
 	int i = 2;
