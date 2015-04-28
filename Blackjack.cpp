@@ -4,8 +4,10 @@
 #include <stdlib.h>
 using namespace std;
 int main(){
-    string players, operation, ai;
+    string players, operation, ai, play, holder;
     int Players, Spot, AI, op, hoomans;
+    bool won=false;
+    start:
     playahs://identifier to go back to if the input for the next line is unacceptable
     cout<<"How many players will there be? (5 max)"<<endl;
     getline(cin,players);
@@ -23,6 +25,7 @@ int main(){
         goto ai_players;
     }
     Deck d(Players);//constructs the deck to have the correct amount of players
+    won=false;
     if(AI!=0){
         hoomans=Players-AI;//how many actual humans are playing
         for(int i=0;i<hoomans;i++){
@@ -35,44 +38,83 @@ int main(){
             d.players[i].ai=false;
         }
     }
+    d.shuffleDeck();
     d.DealCards(Players);//deals the cards
-    for(int i=0;i<Players;i++){
+    for(int i=0;i<Players+1;i++){
         bool turn=true;//resets for every player
         if(!d.players[i].ai){//for a human player
-            while(turn){//will stay until they bust or win or stay
-                cout<<"Player "<<i+1<<", your hand is "<<d.players[i].hand<<".\nWould you like to\n1.Hit\n2.Stay\n3.See what the other hands are"<<endl;
+            while(turn&&!won){//will stay until they bust or win or stay
+                cout<<"Player "<<i+1<<", your hand is ";
+                if(d.players[i].sum==21){
+                    cout<<"Blackjack! you win!"<<endl;
+                    won=true;
+                    d.setWon(true);
+                    break;
+                }
+                int j=0;
+                while(d.players[i].hand[j]!=NULL){
+                    d.printCard(d.players[i].hand[j]->number,d.players[i].hand[j]->suit);//cout<<d.players[i].hand[j]->number<<" of "<<d.players[i].hand[j]->suit;
+                    if(d.players[i].hand[j+1]!=NULL)
+                        cout<<", ";
+                    j++;
+                }
+                cout<<", for a sum of "<<d.players[i].sum<<".\nWould you like to\n1.Hit\n2.Stay\n3.See what the other hands are"<<endl;
                 getline(cin,operation);
                 op=stoi(operation);
                 switch(op){
                     case 1:
-                        turn=d.hit(i);//if they bust or win it will end their turn
+                        turn=d.hit(i, Players);//if they bust or win it will end their turn
                         break;
                     case 2:
                         turn=false;//ends turn
                         break;
                     case 3:
-                        d.peek();
+                        d.peek(Players);
                         break;
                     default:
                         cout<<"That is not a valid option."<<endl;
                 }
+                won=d.getWon();
             }
         }
         else{//for AI
-            while(turn){
-                cout<<"Player "<<i+1<<"'s hand is "<<d.players[i].hand<<endl;
+            while(turn&&!won){
+                if(i==Players)
+                    cout<<"Dealer's hand is [hidden], ";
+                else
+                    cout<<"Player "<<i+1<<"'s hand is [hidden], ";
+                int j=1;
+                while(d.players[i].hand[j]!=NULL){
+                    d.printCard(d.players[i].hand[j]->number,d.players[i].hand[j]->suit);//cout<<d.players[i].hand[j]->number<<" of "<<d.players[i].hand[j]->suit;
+                    if(d.players[i].hand[j+1]!=NULL)
+                        cout<<", ";
+                    j++;
+                }
                 if(d.players[i].sum<17){//will automatically hit if the sum is less than 17
-                    cout<<"Player "<<i+1<<" hits."<<endl;
-                    turn=d.hit(i);
+                    if(i==Players)
+                        cout<<".\nDealer hits"<<endl;
+                    else
+                        cout<<".\nPlayer "<<i+1<<" hits."<<endl;
+                    turn=d.hit(i, Players);
                 }
                 else{
-                    cout<<"Player "<<i+1<<" stays."<<endl;
+                    if(i==Players)
+                        cout<<".\nDealer stays"<<endl;
+                    else
+                        cout<<".\nPlayer "<<i+1<<" stays."<<endl;
                     turn=false;
                 }
+            won=d.getWon();
             }
         }
     }
-    d.dealer();//plays for the dealer
-    d.declare();//declares the winner
+    if(!won){
+        d.declare(Players);//declares the winner
+    }
+    cout<<"Would you like to play again? (Y/N)"<<endl;
+    //getline(cin, holder);
+    getline(cin, play);
+    if(play=="y"||play=="Y")
+        goto start;
     return 0;
 }

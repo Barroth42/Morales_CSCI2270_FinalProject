@@ -20,7 +20,9 @@ struct Player{
    int number;
    string name;
    bool ai=true;
+   bool hasAce=false;
    int sum;
+   bool busted=false;
    int sumHand();
    int lastSummed;
    Player(){};
@@ -36,16 +38,19 @@ public:
    ~Deck();
    void shuffleDeck();
    void DealCards(int Players);
-   bool hit(int player);
-   void peek();
-   void declare();
-   void dealer();
+   bool hit(int player, int numPlayers);
+   void peek(int numPlayers);
+   void declare(int numPlayers);
+   void printCard(int number, int suit);
    int win(int player);
-   Player players[5];
+   Player players[6];
+   bool getWon();
+   void setWon(bool winnerino);
 
 private:
    vector<Card*> decklist;
    int topCard;
+   bool won=false;
 };
 
 #endif // DECK_H
