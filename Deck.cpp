@@ -104,12 +104,14 @@ void Deck::shuffleDeck()
 	shuffle(decklist.begin(),decklist.end(),std::default_random_engine(seed));
 	*///Something is wrong with this method, so I'll try another one that uses vectors instead of arrays.
 
+    //shuffles the deck
 	srand(unsigned(time(0)));
 	random_shuffle(decklist.begin(), decklist.end());
 }
 
 void Deck::DealCards(int numPlayers)
 {
+    //creates each player's hand
 	for(int i=0; i<numPlayers+1;i++)
 	{
 		if(topCard == 52)
@@ -138,6 +140,7 @@ void Deck::DealCards(int numPlayers)
 }*/
 bool Deck::hit(int playerInt, int numPlayers)
 {
+    //allows for the addition of more cards to one's hand and checks the sum to make sure no one busts
 	Player *p = new Player;
 	p = &players[playerInt];
 	int i = 2;
@@ -178,6 +181,7 @@ bool Deck::hit(int playerInt, int numPlayers)
 }
 void Deck::printCard(int number, int suit)
 {
+    //prints out equivalent number
 	switch(number){
 		case 1:
 			cout << "Ace ";
@@ -197,6 +201,7 @@ void Deck::printCard(int number, int suit)
 	}
 	cout << "of ";
 
+    //prints out suit
 	switch(suit){
 		case 0:
 			cout << "Hearts";
@@ -213,6 +218,7 @@ void Deck::printCard(int number, int suit)
 	}
 }
 void Deck::peek(int numPlayers){
+    //allows one to look around the table
     for(int i=0;i<numPlayers+1;i++)
 	{
 		int j=0;
@@ -248,6 +254,7 @@ void Deck::peek(int numPlayers){
 	}
 }
 void Deck::declare(int numPlayers){
+    //operation to check who wins
 	int max = 0;
 	int winner = -1;
 	for(int i=0;i<numPlayers;i++)
