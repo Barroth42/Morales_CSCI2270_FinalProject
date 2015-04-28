@@ -7,7 +7,7 @@ In this project, we will be recreating the pygame library in C++. This will be a
 This program is a library so it is included into a program to allow for more capability in one's code. ***The game is run by asking the user how many players are participating, how many are computer players and how aggressive those players are. All commands are explained in game.***
 
 # Dependencies
-References pygame. Found at http://www.pygame.org/news.html ***No longer references pygame, instead references ***
+References pygame. Found at http://www.pygame.org/news.html ***No longer references pygame, instead references stdlib.h, algorithm, vector, array, random, cstdlib, and ctime libraries. All are include statements.***
 
 # System Requirements
 This is a library the commands will primarily be Linux and Windows, but will be usable in all operating systems. ***Game created in a Linux OS but should work for all operating systems.***
