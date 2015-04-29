@@ -16,7 +16,7 @@ This is a library the commands will primarily be Linux and Windows, but will be 
 Bryce Griebenow, Ben Roberts, Cory Morales
 
 # Contributors
-None yet.
+RyanBaten
 
 # Open issues/ bugs
 None yet.
