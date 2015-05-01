@@ -19,4 +19,4 @@ Bryce Griebenow, Ben Roberts, Cory Morales
 RyanBaten
 
 # Open issues/ bugs
-None yet.
+Memory leak upon exiting the game after playing several games. Also the random card shufling does not work.
