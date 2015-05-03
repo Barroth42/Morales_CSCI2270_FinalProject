@@ -3,7 +3,8 @@
 #include "Deck.h"
 #include <stdlib.h>
 using namespace std;
-int main(){
+int main()
+{
     string players, operation, ai, play, holder;
     int Players, Spot, AI, op, hoomans;
     bool won=false;
@@ -11,7 +12,8 @@ int main(){
     playahs://identifier to go back to if the input for the next line is unacceptable
     cout<<"How many players will there be? (5 max)"<<endl;
     getline(cin,players);
-    Players=stoi(players);
+    if(players != "")
+        Players=stoi(players);
     if(Players<0||Players>5){//checks to see if the amount of players is acceptable
         cout<<"Not a valid number."<<endl;
         goto playahs;
@@ -116,5 +118,8 @@ int main(){
     getline(cin, play);
     if(play=="y"||play=="Y")
         goto start;
+    //else{
+   //     d.~Deck();
+   // }
     return 0;
 }
