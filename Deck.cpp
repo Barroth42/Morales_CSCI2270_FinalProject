@@ -11,56 +11,35 @@
 //#include <chrono>
 #include "Deck.h"
 
-
 using namespace std;
 
-int Player::sumHand()
-{
-	sum = 0;
-	hasAce=false;
-	for(int i=0; i<5;i++)
-	{
-		if(hand[i] != NULL)
-		{
-			if(hand[i]->number > 1 && hand[i]->number <11)
-			{
-				sum += hand[i]->number;
-			}
-			else if(hand[i]->number == 1 && !hasAce)
-			{
-				if(sum > 10)
-				{
-					sum += 1;
-				}
-				else if(sum == 10)
-				{
-                    hasAce=true;
-					sum = 21;
-				}
-				else
-				{
-                    hasAce=true;
-                    sum += 11;
-				}
-			}
-			else if(hand[i]->number == 1 && hasAce)
-			{
-			    sum+=1;
-			}
-			else if(hand[i]->number >10)
-			{
-				sum += 10;
-			}
-		}
-	}
-	if(sum>21&&hasAce)
-        sum-=10;
-	return sum;
+Deck::~Deck(){
+    decklist.clear();
 }
 
+/* Prototype: Deck::Deck(int);
+ *
+ * Description:
+ * This is the constructor for the Deck class.
+ * It initializes all players' hands to NULL, including
+ * the dealer's. It also initializes the deck itself to
+ * contain all 52 cards.
+ *
+ * Example:takes the number of players(not including dealer)
+ * 			as a parameter.
+ * Deck d;
+ * d.Deck(numPlayers);
+ *
+ * Precondition:
+ * Must have a deck object defined, and know the number of players.
+ *
+ * Postcondition:
+ * Players vector filled with the number of players plus the dealer.
+ * All hands are NULL
+ * decklist is in unshuffled order with all 52 cards.
+ */
 Deck::Deck(int numPlayers)
 {
-	//players[numPlayers];
 	for(int i=0;i<numPlayers+1;i++)
 	{
 		players[i].sum =0;
@@ -69,7 +48,8 @@ Deck::Deck(int numPlayers)
 			players[i].hand[j] = NULL;
 		}
 	}
-	topCard =0;
+	topCard =0;//drawing cards doesn't delete cards from the decklist
+				//it just moves where to look for the top card.
 	for(int i=0;i<4;i++)
 	{
 		for(int j=1;j<14;j++)
@@ -77,44 +57,62 @@ Deck::Deck(int numPlayers)
 			Card *c = new Card;
 			c->number = j;
 			c->suit = i;
-			//decklist[13*i+j-1].number = j;
-			//decklist[13*i+j-1].suit = i;
 			decklist.push_back(c);
-			//decklist[13*i+j-1].shuffled = false;
 		}
 	}
 }
 
+/* Prototype: void Deck::shuffleDeck();
+ *
+ * Description:
+ * This method uses a built in C++ function to shuffle the
+ * order of the cards in the decklist.
+ * (Template found at: http://www.cplusplus.com/reference/algorithm/random_shuffle/)
+ *
+ * Example:
+ * d.shuffleDeck();
+ *
+ * Precondition:
+ * File needs to #include algorithm, vector, ctime, and cstdlib
+ * Needs decklist to be filled with cards.
+ *
+ * Postcondition:
+ * The order of cards in decklist is randomized.
+ */
 void Deck::shuffleDeck()
 {
-	//Probably horribly inefficient method:
-	/*vector<Card> shuffledDeck;
-	for(int i=0;i<52;i++)
-	{
-		int cardIndex = rand()%52;
-		while(unshuffledDeck[cardIndex].shuffled = true)
-		{
-			cardIndex = rand()%52;
-		}
-		shuffledDeck[i]=unshuffledDeck[cardIndex];
-	}*/
-
-	/*
-	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();//found this method at http://www.cplusplus.com/reference/algorithm/shuffle/
-	shuffle(decklist.begin(),decklist.end(),std::default_random_engine(seed));
-	*///Something is wrong with this method, so I'll try another one that uses vectors instead of arrays.
-
-    //shuffles the deck
 	srand(unsigned(time(0)));
 	random_shuffle(decklist.begin(), decklist.end());
 }
 
+/* Prototype: void Deck::DealCards(int);
+ *
+ * Description:
+ * This function deals the first two cards to all players
+ * including the dealer, by copying the card that is at the
+ * index topCard in decklist to the player's hand array,
+ * and incrementing topCard.
+ *
+ * Example: parameter is the number of players, not including dealer.
+ * Deck d;
+ * int numPlayers = 1;
+ * d.DealCards(numPlayers);
+ *
+ * Preconditions:
+ * The array players must be initialized.
+ * decklist must be shuffled.
+ * numPlayers should be between 1 and 5.
+ *
+ * Postconditions:
+ * Each player's hand array at index 0 and 1 will
+ * now have a card rather than being NULL.
+ * Each player's sum variable is updated.
+ */
 void Deck::DealCards(int numPlayers)
 {
-    //creates each player's hand
 	for(int i=0; i<numPlayers+1;i++)
 	{
-		if(topCard == 52)
+		if(topCard == 52)//should never happen.
 		{
 			cout << "Unable to deal. Ran out of cards.";
 		}
@@ -134,13 +132,38 @@ void Deck::DealCards(int numPlayers)
 	}
 }
 
-/*void PrintHand(Player p)
-{
-
-}*/
+/* Prototype: bool Deck::hit(int, int);
+ *
+ * Description: Takes the card stored at the topCard index
+ * of the decklist, and adds it to the next open slot in the
+ * player's hand, and then increments topCard. It returns
+ * a boolean to either end or continue the turn. If the player
+ * busts or draws to total 21, it returns false to end the turn,
+ * otherwise, it returns true.
+ *
+ * Example: The parameters are:first, the index of the player
+ * 			in the vector of players.
+ * 			Second, the number of players not including the dealer.
+ * Deck d;
+ * int numPlayers = 3;
+ * int playerIndex = 0;
+ * d.hit(playerIndex, numPlayers);
+ *
+ * Precondition:
+ * -The player index passed is less than or equal
+ * to the numPlayers.
+ * -There is at least one NULL space in the player's hand
+ * to be filled.
+ *
+ * Postcondition:
+ * The first NULL space in the player's hand has been
+ * replaced by a card.
+ * Sums all cards in the player's hand and returns according
+ * to whether the turn is over. If the turn is over
+ * it prints what the player drew and if they busted or won.
+ */
 bool Deck::hit(int playerInt, int numPlayers)
 {
-    //allows for the addition of more cards to one's hand and checks the sum to make sure no one busts
 	Player *p = new Player;
 	p = &players[playerInt];
 	int i = 2;
@@ -179,9 +202,103 @@ bool Deck::hit(int playerInt, int numPlayers)
 		return false;
 	}
 }
+
+/* Prototype: void Player::sumHand();
+ *
+ * Description:
+ * This function adds up all of the cards in the player's
+ * hand and returns the sum. It takes into account whether
+ * or not they have an ace, so if they bust,
+ * the ace will switch from meaning 11 to only 1.
+ *
+ * Example:This is a function under the player struct,
+ * 			so it will be called by p. or p->
+ * 			It takes no parameters.
+ *
+ * Player *p= &players[0];
+ * if(p->sumHand() == 21)
+ * ...
+ *
+ * Precondition:
+ * -The player's hand should have cards in it
+ * prior to calling this function. (meaning not
+ * all slots in their hand array are NULL)
+ * -The player must be a defined player in the vector "players"
+ * -The numbers stored in the cards must be between 1 and 13.
+ *
+ * Postcondition:
+ * The sum of the cards in the hand is returned.
+ * The boolean hasAce is updated to true in the player
+ * struct if the player has one or more ace.
+ */
+int Player::sumHand()
+{
+	sum = 0;
+	hasAce=false;
+	for(int i=0; i<5;i++)
+	{
+		if(hand[i] != NULL)
+		{
+			if(hand[i]->number > 1 && hand[i]->number <11)
+			{
+				sum += hand[i]->number;
+			}
+			else if(hand[i]->number == 1 && !hasAce)//if this is the first ace
+			{
+				if(sum > 10)
+				{
+					sum += 1;
+				}
+				else if(sum == 10)
+				{
+                    hasAce=true;
+					sum = 21;
+				}
+				else
+				{
+                    hasAce=true;
+                    sum += 11;
+				}
+			}
+			else if(hand[i]->number == 1 && hasAce)//if they have more than one ace.
+			{
+			    sum+=1;
+			}
+			else if(hand[i]->number >10)
+			{
+				sum += 10;
+			}
+		}
+	}
+	if(sum>21&&hasAce)
+        sum-=10;
+	return sum;
+}
+
+/* Prototype: void Deck::printCard(int, int);
+ *
+ * Description: This function takes the numbers associated with
+ * a card's value and suit and will print the value of the card
+ * either in a number between 2 and 10, or with a string, and
+ * prints the suit as a string rather than the number that is
+ * stored in the card struct.
+ * (For example: a card with number=13 and suit=0 will
+ * be printed as King of Hearts.)
+ *
+ * Example: parameters are the number, then the suit associated with a card.
+ * Deck d;
+ * int num=1;
+ * int suit=2;
+ * d.printCard(num, suit);
+ *
+ * Preconditions: This function should be called based on
+ * cards that are in a players hand array, not really with
+ * directly defined ints as above in the example.
+ *
+ * Postconditions:Prints to the terminal the value and suit of a card.
+ */
 void Deck::printCard(int number, int suit)
 {
-    //prints out equivalent number
 	switch(number){
 		case 1:
 			cout << "Ace ";
@@ -200,8 +317,6 @@ void Deck::printCard(int number, int suit)
 			break;
 	}
 	cout << "of ";
-
-    //prints out suit
 	switch(suit){
 		case 0:
 			cout << "Hearts";
@@ -217,8 +332,26 @@ void Deck::printCard(int number, int suit)
 			break;
 	}
 }
+
+/* Prototype: void Deck::peek(int);
+ *
+ * Description:
+ * This function displays the cards in all players' hands,
+ * except for the first card. It also displays if a player busted.
+ *
+ * Example: parameter is the number of players not including the dealer.
+ * Deck d;
+ * int numPlayers = 3;
+ * d.peek(numPlayers);
+ *
+ * Preconditions:
+ * Players' hands must have cards in them.
+ *
+ * Postconditions:
+ * Prints player name and hand for all players including dealer.
+ * The first card in the hand is hidden.
+ */
 void Deck::peek(int numPlayers){
-    //allows one to look around the table
     for(int i=0;i<numPlayers+1;i++)
 	{
 		int j=0;
@@ -243,18 +376,32 @@ void Deck::peek(int numPlayers){
 					cout << ", ";
 				else
 				{
-
 					cout << endl;
-					//break;
 				}
 			}
-
 			j++;
 		}
 	}
 }
+
+/* Prototype: void Deck::declare(int);
+ *
+ * Description:
+ * This function declares the winner of the game
+ * by comparing each player's sum with the maximum so far.
+ * The player with the largest sum that did not bust is
+ * the winner.
+ *
+ * Example: parameter is the number of players not including dealer.
+ * Deck d;
+ * int numPlayers = 3;
+ * d.declare(numPlayers);
+ *
+ * Preconditions: Each player's hand needs to be summed beforehand.
+ *
+ * Postconditions: Prints who the winner is and their sum.
+ */
 void Deck::declare(int numPlayers){
-    //operation to check who wins
 	int max = 0;
 	int winner = -1;
 	for(int i=0;i<numPlayers;i++)
@@ -277,10 +424,13 @@ void Deck::declare(int numPlayers){
             cout << "Player " << winner+1 << " wins with a sum of " << players[winner].sum << endl;
 	}
 }
+
+
 void Deck::setWon(bool winnerino){
     won=winnerino;
 }
 bool Deck::getWon(){
     return won;
 }
-Deck::~Deck(){}
+
+
